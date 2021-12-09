@@ -7,10 +7,26 @@
 
 <script>
 
+import { Piano } from '@tonejs/piano';
+import WebMidi from 'webmidi';
+
 export default {
   name: 'Canvas',
+  data() {
+    return {
+      midiDevice: null
+    }
+  },
+  mounted() {
+    this.initializePianoSamples();
+     WebMidi.enable(() => {
+      this.availableInputs = WebMidi.inputs.map((input) => input.name);
+      this.midiDevice = WebMidi.getInputByName(this.availableInputs[0]); //eslint-disable-line
+    });
+  },
   methods: {
     play(boton) {
+
       boton.style.display = "none";
 
       let regularWorker = new Worker("/workers/canvasWorker.js");
@@ -26,12 +42,40 @@ export default {
           "stop": e.keyCode
         });
       });
-    
+
+      this.midiDevice.addListener('noteon', 'all', (e) => {
+        const { note } = e;
+        this.noteOn(note);
+      });
+      this.midiDevice.addListener('noteoff', 'all', (e) => {
+        const { note } = e;
+        this.noteOff(note);
+      });
+
       regularWorker.onmessage = function(e) {
         var audio = new Audio(e.data.audio);
         audio.play();
       };
-    }
+    },
+
+    initializePianoSamples() {
+      this.piano = new Piano({ velocities: 2 });
+      this.piano.toDestination();
+      this.piano.output.gain.value = 0.5;
+      this.piano.load().then(() => {
+        console.log('loaded!');
+      });
+    },
+
+    noteOn(note) {
+      // console.log('Note ON: ', note);
+      this.piano.keyDown({ midi: note.number });
+    },
+
+    noteOff(note) {
+      // console.log('Note OFF: ', note);
+      this.piano.keyUp({ midi: note.number });
+    },
   },
 }
 

@@ -10,7 +10,7 @@
 export default {
   name: 'Color',
   props: ['modelValue', 'colorEliminable'],
-  emits: ['borrar']
+  emits: ['borrar', 'update:modelValue']
 }
 
 </script>
