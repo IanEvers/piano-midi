@@ -37,9 +37,6 @@ import Color from './Color.vue'
 
 export default {
   name: 'PanelColores',
-  props: {
-    
-  },
   components: {
     Color
   },
@@ -68,7 +65,7 @@ export default {
   methods: {
     agregarColor: function () {
       var paletaActiva = this.paletaActiva();
-      if(paletaActiva.colores.length < 7) { /* 7 colores como máximo */ 
+      if(paletaActiva.colores.length < 10) { /* 7 colores como máximo */ 
         paletaActiva.colores.push({
           id: paletaActiva.siguienteId++,
           color: this.$parent.colorRandom()

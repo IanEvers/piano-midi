@@ -1,6 +1,7 @@
 <template>
   <div class="canvasContenedor">
-      <canvas width="500" height="500" id="canvas"></canvas>
+      <canvas width="500" height="500"  class="canvas" id="canvas"></canvas>
+      <canvas width="500" height="500"  class="canvas canvasFondo" id="canvasFondo"></canvas>
       <button @click="play($event.target)"> <i class="fas fa-play fa-4x"></i> </button> 
   </div>
 </template>
@@ -14,7 +15,8 @@ export default {
   name: 'Canvas',
   data() {
     return {
-      midiDevice: null
+      midiDevice: null,
+      regularWorker: new Worker("/workers/canvasWorker.js")
     }
   },
   mounted() {
@@ -23,39 +25,39 @@ export default {
       this.availableInputs = WebMidi.inputs.map((input) => input.name);
       this.midiDevice = WebMidi.getInputByName(this.availableInputs[0]); //eslint-disable-line
     });
+
+    var canvases = document.getElementsByClassName('canvas')
+
+    Array.from(canvases).forEach(function(canvas) {
+      canvas.width  = window.innerWidth / 2.5
+      canvas.height =  canvas.width 
+    });
+
   },
   methods: {
     play(boton) {
 
       boton.style.display = "none";
 
-      let regularWorker = new Worker("/workers/canvasWorker.js");
-
-      window.addEventListener('keydown', function(e) {
-        regularWorker.postMessage({
-          "play": e.keyCode
-        });
-      });
-
-      window.addEventListener('keyup', function(e) {
-        regularWorker.postMessage({
-          "stop": e.keyCode
-        });
-      });
+      // envío la lógica de los canvas al worker
+      var canvas = document.getElementById('canvas')
+      var offscreen = canvas.transferControlToOffscreen();
+      this.regularWorker.postMessage({canvas: offscreen}, [offscreen]);
+     
+      var canvasFondo = document.getElementById('canvasFondo')
+      var offscreenFondo = canvasFondo.transferControlToOffscreen();
+      this.regularWorker.postMessage({canvasFondo: offscreenFondo}, [offscreenFondo]);
 
       this.midiDevice.addListener('noteon', 'all', (e) => {
         const { note } = e;
         this.noteOn(note);
       });
+
       this.midiDevice.addListener('noteoff', 'all', (e) => {
         const { note } = e;
         this.noteOff(note);
       });
 
-      regularWorker.onmessage = function(e) {
-        var audio = new Audio(e.data.audio);
-        audio.play();
-      };
     },
 
     initializePianoSamples() {
@@ -68,13 +70,21 @@ export default {
     },
 
     noteOn(note) {
-      // console.log('Note ON: ', note);
       this.piano.keyDown({ midi: note.number });
+
+      this.regularWorker.postMessage({
+        "presionado": 1,
+        "nota": note.number
+      });
     },
 
     noteOff(note) {
-      // console.log('Note OFF: ', note);
       this.piano.keyUp({ midi: note.number });
+
+      this.regularWorker.postMessage({
+        "presionado": 0,
+        "nota": note.number
+      });
     },
   },
 }
@@ -90,6 +100,10 @@ export default {
 
 canvas {
   border: 1px solid black;
+}
+
+.canvasFondo {
+  position: absolute;
 }
 
 canvas:fullscreen {

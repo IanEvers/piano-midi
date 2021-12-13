@@ -19,7 +19,6 @@ import PanelColores from './components/PanelColores.vue'
 import Canvas from './components/Canvas.vue'
 import PanelOpciones from './components/PanelOpciones.vue'
 
-
 export default {
   name: 'App',
   components: {
@@ -75,16 +74,16 @@ h1 {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  width: 100vw;
+  height: 100vh;
 }
 
 .shadow {
   box-shadow: rgba(149, 157, 165, 0.4) 0px 8px 24px;
 }
 
-.fullScreen:hover,
-.fullScreen:focus, 
-.icono:hover,
-.icono:focus {
+.fullScreen:hover, 
+.icono:hover {
   transform: translateY(-0.25em);
 }
 
