@@ -11,7 +11,7 @@ let orientacion = 'vertical';
 let cambioNotaMasBaja = false;
 let cambioNotaMasAlta = false;
 
-let pausa;
+let playing = false;
 
 let color = 'red'
 
@@ -28,6 +28,16 @@ onmessage = function(evt) {
     }
 };
 
+function setearConfiguracion(opciones) {
+    
+    playing = opciones.playing;
+    if(playing == true) {
+        requestAnimationFrame(renderCanvasFondo);
+        requestAnimationFrame(renderCanvas);
+
+    }
+}
+
 function handleNota() {
 
 }
@@ -40,7 +50,6 @@ function inicializarCanvas(canvas) {
 }
 
 function renderCanvas() {
-
     requestAnimationFrame(renderCanvas);
 }
 
@@ -54,7 +63,7 @@ function inicializarCanvasFondo(fondo) {
 }
 
 function renderCanvasFondo() {
-    
+
     const tiempo = new Date() - tiempoInicial;
     posicion = (tiempo/10000) * canvasFondo.height;
     borrar(ctxFondo);
@@ -64,7 +73,10 @@ function renderCanvasFondo() {
     if(posicion > canvasFondo.height) { 
         tiempoInicial = new Date();
     }
-    requestAnimationFrame(renderCanvasFondo);
+
+    if(playing) {
+        requestAnimationFrame(renderCanvasFondo);
+    }
 }
 
 function pintarLinea() {
@@ -76,5 +88,5 @@ function pintarLinea() {
 }
 
 function borrar(canvas) {
-    canvas.clearRect(0,0,canvasFondo.width, canvasFondo.height);
+    canvas.clearRect(0, 0, canvasFondo.width, canvasFondo.height);
 }

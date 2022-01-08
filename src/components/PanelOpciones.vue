@@ -1,10 +1,9 @@
 <template>
   <div>
-    <button id="fullScreen" class="fullScreen shadow" @click="fullScreen"> <i class="fas fa-expand fa-3x"></i> </button>
-    <button id="pausa" class="fullScreen shadow " @click="togglePausa()"> 
-      <i v-if="pausa" class="fas fa-play fa-3x "></i> 
-      <i v-else class="fas fa-pause fa-3x "></i> 
-    </button>
+    <el-tooltip class="item" content="No disponible" placement="right" effect="dark" >
+      <button id="fullScreen" class="fullScreen shadow" @click="fullScreen"> <i class="fas fa-expand fa-3x"></i> </button>
+    </el-tooltip>
+
 
     <div class="orientacion">
       <el-form
@@ -54,7 +53,6 @@ export default {
   data() {
     return {
       orientacion: 'Vertical',
-      pausa: true,
       velocidad: 60,
       notaMasBaja: {
         disabled: true,
@@ -77,6 +75,7 @@ export default {
   },
   methods: {
     fullScreen() {
+      /* comentado hasta futuro aviso
       var canvas = document.getElementById('canvas')
       if(canvas.webkitRequestFullScreen) {
         canvas.webkitRequestFullScreen();
@@ -84,6 +83,7 @@ export default {
       else {
         canvas.mozRequestFullScreen();
       }
+      */
     },
     OnCambioParametros() {
       // nada todavia
@@ -92,9 +92,6 @@ export default {
       nota.disabled = false
       nota.numero = ""
     },
-    togglePausa() {
-      this.pausa = !this.pausa
-    }
   }
 }
 </script>
@@ -108,12 +105,6 @@ export default {
   background-color: #e9e5e6;
   border-radius: 25px;
   padding: 0.8rem;
-}
-
-.pausa {
-  color: #534b4b;
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 .orientacion {

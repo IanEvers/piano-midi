@@ -2,7 +2,8 @@
   <div class="canvasContenedor">
       <canvas width="500" height="500"  class="canvas" id="canvas"></canvas>
       <canvas width="500" height="500"  class="canvas canvasFondo" id="canvasFondo"></canvas>
-      <button @click="play($event.target)"> <i class="fas fa-play fa-4x"></i> </button> 
+      <button v-if="!playing" @click="play()"> <i class="fas fa-play fa-4x"></i> </button> 
+      <button v-else @click="pause()"> <i class="fas fa-pause fa-4x"></i> </button> 
   </div>
 </template>
 
@@ -16,29 +17,23 @@ export default {
   data() {
     return {
       midiDevice: null,
-      regularWorker: new Worker("/workers/canvasWorker.js")
+      regularWorker: new Worker("/workers/canvasWorker.js"),
+      started: false,
+      playing: false,
     }
   },
   mounted() {
     this.initializePianoSamples();
-     WebMidi.enable(() => {
+    
+    WebMidi.enable(() => {
       this.availableInputs = WebMidi.inputs.map((input) => input.name);
       this.midiDevice = WebMidi.getInputByName(this.availableInputs[0]); //eslint-disable-line
     });
 
-    var canvases = document.getElementsByClassName('canvas')
-
-    Array.from(canvases).forEach(function(canvas) {
-      canvas.width  = window.innerWidth / 2.5
-      canvas.height =  canvas.width 
-    });
-
+    this.redimensionar();
   },
   methods: {
-    play(boton) {
-
-      boton.style.display = "none";
-
+    start() {
       // envío la lógica de los canvas al worker
       var canvas = document.getElementById('canvas')
       var offscreen = canvas.transferControlToOffscreen();
@@ -47,17 +42,42 @@ export default {
       var canvasFondo = document.getElementById('canvasFondo')
       var offscreenFondo = canvasFondo.transferControlToOffscreen();
       this.regularWorker.postMessage({canvasFondo: offscreenFondo}, [offscreenFondo]);
+      
+      if(this.midiDevice) {
+        this.midiDevice.addListener('noteon', 'all', (e) => {
+          const { note } = e;
+          this.noteOn(note);
+        });
 
-      this.midiDevice.addListener('noteon', 'all', (e) => {
-        const { note } = e;
-        this.noteOn(note);
+        this.midiDevice.addListener('noteoff', 'all', (e) => {
+          const { note } = e;
+          this.noteOff(note);
+        });
+      }
+      this.started = true
+    },
+
+    play() {
+      if(!this.started) {
+        this.start()
+      }
+
+      this.regularWorker.postMessage({
+        "opciones": 
+          {
+            playing: true
+          }
+      
       });
 
-      this.midiDevice.addListener('noteoff', 'all', (e) => {
-        const { note } = e;
-        this.noteOff(note);
+      this.playing = true;
+    },
+    pause() {
+      this.regularWorker.postMessage({
+        "opciones": { playing: false }
       });
 
+      this.playing = false;
     },
 
     initializePianoSamples() {
@@ -86,6 +106,15 @@ export default {
         "nota": note.number
       });
     },
+
+    redimensionar() {
+      var canvases = document.getElementsByClassName('canvas')
+      console.log('dinesion!')
+      Array.from(canvases).forEach(function(canvas) {
+        canvas.width  = window.innerWidth / 2.5
+        canvas.height =  canvas.width 
+      });
+    }
   },
 }
 
