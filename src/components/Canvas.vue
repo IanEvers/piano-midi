@@ -64,10 +64,9 @@ export default {
 
       this.regularWorker.postMessage({
         "opciones": 
-          {
-            playing: true
-          }
-      
+        {
+          playing: true
+        }
       });
 
       this.playing = true;

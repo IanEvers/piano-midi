@@ -4,7 +4,6 @@
       <button id="fullScreen" class="fullScreen shadow" @click="fullScreen"> <i class="fas fa-expand fa-3x"></i> </button>
     </el-tooltip>
 
-
     <div class="orientacion">
       <el-form
         :label-position="form.labelPosition"
@@ -14,8 +13,8 @@
         <span class="label">Orientación</span>
         <div class="input">
           <el-radio-group v-model="orientacion" @change="OnCambioParametros">
-            <el-radio-button label="Vertical" ></el-radio-button>
-            <el-radio-button label="Horizontal"></el-radio-button>
+            <el-radio-button label="Vertical"   ></el-radio-button>
+            <el-radio-button label="Horizontal" ></el-radio-button>
           </el-radio-group>
         </div>
 
@@ -37,7 +36,13 @@
         <div class="input">
           <el-slider v-model="grosorDeLinea" show-input></el-slider>
         </div>
-      
+        <span class="label">Mantener notas</span>
+        <div class="input">
+          <el-radio-group v-model="holdearNotas" @change="cambioHoldearNotas">
+            <el-radio-button label="Sí" ></el-radio-button>
+            <el-radio-button label="No" ></el-radio-button>
+          </el-radio-group>
+        </div>
       </el-form>
     </div>
   </div>
@@ -45,13 +50,13 @@
 
 <script>
 
-
 export default {
   name: 'PanelOpciones',
   components: {
   },
   data() {
     return {
+      regularWorker: new Worker("/workers/canvasWorker.js"),
       orientacion: 'Vertical',
       velocidad: 60,
       notaMasBaja: {
@@ -63,6 +68,7 @@ export default {
         numero: 86
       },
       grosorDeLinea: 50,
+      holdearNotas: 'No',
       form: {
         labelPosition: 'top',
         formLabelAlign: {
@@ -84,6 +90,20 @@ export default {
         canvas.mozRequestFullScreen();
       }
       */
+    },
+    cambioHoldearNotas() {
+      let holdearNotasOpciones;
+      if(this.holdearNotas == 'Sí') {
+        holdearNotasOpciones = true
+      } else {
+        holdearNotasOpciones = false
+      }
+      this.regularWorker.postMessage({
+        "opciones": 
+        {
+          holdearNotas: holdearNotasOpciones
+        }
+      });
     },
     OnCambioParametros() {
       // nada todavia

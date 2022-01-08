@@ -15,6 +15,13 @@ let playing = false;
 
 let color = 'red'
 
+let holdearNotas = false;
+
+let notasPresionadas = [ ]
+
+let grosorLinea = 10
+
+
 onmessage = function(evt) {
     if(evt.data.nota) {
         const { presionado, nota } = evt.data
@@ -29,17 +36,32 @@ onmessage = function(evt) {
 };
 
 function setearConfiguracion(opciones) {
+    console.log(opciones)
     
     playing = opciones.playing;
     if(playing == true) {
         requestAnimationFrame(renderCanvasFondo);
         requestAnimationFrame(renderCanvas);
-
     }
+    holdearNotas = opciones.holdearNotas
+    console.log(holdearNotas)
 }
 
-function handleNota() {
+function handleNota(presionado, nota) {
+    console.log(holdearNotas)
+    if(presionado == 0 ) {
+        if(holdearNotas == false) {
 
+            const index = notasPresionadas.indexOf(nota);
+            if (index > -1) {
+                notasPresionadas.splice(index, 1);
+            }
+        } else {
+            return
+        }
+    } else {
+        notasPresionadas.push(nota); 
+    }
 }
 
 function inicializarCanvas(canvas) {
@@ -50,6 +72,15 @@ function inicializarCanvas(canvas) {
 }
 
 function renderCanvas() {
+    notasPresionadas.forEach(nota => {        
+        ctx.fillStyle = color;
+        if(orientacion == 'vertical') {
+            ctx.fillRect(nota * 5, posicion, grosorLinea, 5);
+        } else {
+            ctx.fillRect(posicion, nota * 5, 5, grosorLinea);
+        }
+    });
+
     requestAnimationFrame(renderCanvas);
 }
 
@@ -78,6 +109,8 @@ function renderCanvasFondo() {
         requestAnimationFrame(renderCanvasFondo);
     }
 }
+
+// FUNCIONES DE PINTADO Y DESPINTADO DEL CANVAS
 
 function pintarLinea() {
     if(orientacion == 'vertical') {
