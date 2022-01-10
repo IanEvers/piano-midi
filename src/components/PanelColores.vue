@@ -10,7 +10,7 @@
       <i class="fas fa-plus fa-2x noColor" id="agregarColor"  @click="agregarColor"></i>
     </div>
     <div class="flex icono eliminarcolor" id="" >
-      <i class="fas fa-trash fa-2x noColor" :class="{ borde: eliminarColores }" id="borrarColor"  @click="coloresEliminables"></i>
+      <i class="fas fa-trash fa-2x noColor" :class="{ borde: eliminarColores }" id="borrarColor" @click="coloresEliminables"></i>
     </div>
   </div>
   <div class="colores">
@@ -73,7 +73,7 @@ export default {
       }
     },
     guardarColores () {
-      localStorage.paletas  = JSON.stringify(this.paletas)
+      localStorage.paletas = JSON.stringify(this.paletas)
     },
     coloresEliminables() {
       this.eliminarColores = !this.eliminarColores

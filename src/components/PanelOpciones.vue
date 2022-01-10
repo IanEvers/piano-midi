@@ -9,10 +9,9 @@
         :label-position="form.labelPosition"
         :model="form.formLabelAlign"
       >
-        
         <span class="label">Orientación</span>
         <div class="input">
-          <el-radio-group v-model="orientacion" @change="OnCambioParametros">
+          <el-radio-group v-model="opciones.orientacion" @change="OnCambioParametros()">
             <el-radio-button label="Vertical"   ></el-radio-button>
             <el-radio-button label="Horizontal" ></el-radio-button>
           </el-radio-group>
@@ -20,25 +19,23 @@
 
         <span class="label">Velocidad</span>
         <div class="input">
-          <el-input-number v-model="velocidad" :min="33" :max="180" @change="OnCambioParametros" />
+          <el-input-number v-model="opciones.velocidad" :min="33" :max="180" @change="OnCambioParametros()" />
         </div>
         <span class="label">Nota más grave</span>
         <div class="input flex">
-          <el-input v-model="notaMasBaja.numero" :disabled="notaMasBaja.disabled" :min="33" :max="180" @change="OnCambioParametros" />
-          <el-button type="primary" @click="cambiarNota(notaMasBaja)"> <i class="fas fa-exchange-alt"></i> </el-button>
+          <el-input v-model="opciones.notaMasBaja"  :min="33" :max="180" @change="OnCambioParametros()" />
         </div>
         <span class="label">Nota más aguda</span>
         <div class="input flex">
-          <el-input v-model="notaMasAlta.numero" :disabled="notaMasAlta.disabled" :min="33" :max="180" @change="OnCambioParametros" />
-          <el-button type="primary" @click="cambiarNota(notaMasAlta)"> <i class="fas fa-exchange-alt"></i> </el-button>
+          <el-input v-model="opciones.notaMasAlta" :min="33" :max="180" @change="OnCambioParametros()" />
         </div>
         <span class="label">Grosor de línea</span>
         <div class="input">
-          <el-slider v-model="grosorDeLinea" show-input></el-slider>
+          <el-slider v-model="opciones.grosorLinea" show-input  @change="OnCambioParametros()"></el-slider>
         </div>
         <span class="label">Mantener notas</span>
         <div class="input">
-          <el-radio-group v-model="holdearNotas" @change="cambioHoldearNotas">
+          <el-radio-group v-model="form.holdearNotas.label" @change="cambioHoldearNotas()">
             <el-radio-button label="Sí" ></el-radio-button>
             <el-radio-button label="No" ></el-radio-button>
           </el-radio-group>
@@ -56,20 +53,22 @@ export default {
   },
   data() {
     return {
-      regularWorker: new Worker("/workers/canvasWorker.js"),
-      orientacion: 'Vertical',
-      velocidad: 60,
-      notaMasBaja: {
-        disabled: true,
-        numero: 62
+
+      opciones: {
+        orientacion: 'Vertical',
+        velocidad: 60,
+        notaMasBaja: 33,
+        notaMasAlta: 86,
+        grosorLinea: 10,
+        holdearNotas: false,
+        color: 'red'
       },
-      notaMasAlta: {
-        disabled: true,
-        numero: 86
-      },
-      grosorDeLinea: 50,
-      holdearNotas: 'No',
+
+
       form: {
+        holdearNotas:  {
+          label:'No',
+        },
         labelPosition: 'top',
         formLabelAlign: {
           name: '',
@@ -77,6 +76,11 @@ export default {
           type: '',
         },
       },
+    }
+  },
+  computed: {
+    regularWorker () {
+      return this.$store.state.regularWorker
     }
   },
   methods: {
@@ -92,25 +96,16 @@ export default {
       */
     },
     cambioHoldearNotas() {
-      let holdearNotasOpciones;
-      if(this.holdearNotas == 'Sí') {
-        holdearNotasOpciones = true
-      } else {
-        holdearNotasOpciones = false
-      }
+      this.opciones.holdearNotas = !this.opciones.holdearNotas
+      this.OnCambioParametros()
+    },
+    OnCambioParametros() {
       this.regularWorker.postMessage({
         "opciones": 
         {
-          holdearNotas: holdearNotasOpciones
+          opciones: {...this.opciones}
         }
       });
-    },
-    OnCambioParametros() {
-      // nada todavia
-    },
-    cambiarNota(nota) {
-      nota.disabled = false
-      nota.numero = ""
     },
   }
 }

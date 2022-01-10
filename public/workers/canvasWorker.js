@@ -1,33 +1,37 @@
-
 let canvas;
 let ctx;
 
+ 
 let canvasFondo;
 let ctxFondo;
 
 let posicion;
-let orientacion = 'vertical';
-
-let cambioNotaMasBaja = false;
-let cambioNotaMasAlta = false;
-
-let playing = false;
-
-let color = 'red'
-
-let holdearNotas = false;
 
 let notasPresionadas = [ ]
 
-let grosorLinea = 10
+let playing = false;
+let color = 'red';
 
+let opciones =
+{
+    holdearNotas: false,
+    notaMasBaja: 33,
+    notaMasAlta: 86,
+    orientacion: 'Vertical',
+    grosorLinea: 10,
+    velocidad: 60
+}
 
 onmessage = function(evt) {
     if(evt.data.nota) {
         const { presionado, nota } = evt.data
         handleNota(presionado, nota)
     } else if (evt.data.opciones) {
-        setearConfiguracion(evt.data.opciones)
+        setearConfiguracion(evt.data.opciones.opciones)
+    } else if (evt.data.playingStatus) {
+        togglePlay(evt.data.playingStatus.playing)
+    } else if (evt.data.color) {
+        color = evt.data.color;
     } else if (evt.data.canvas) {
         inicializarCanvas(evt.data.canvas)
     }  else if (evt.data.canvasFondo) {
@@ -35,23 +39,23 @@ onmessage = function(evt) {
     }
 };
 
-function setearConfiguracion(opciones) {
-    console.log(opciones)
-    
-    playing = opciones.playing;
-    if(playing == true) {
+function setearConfiguracion(opcionesMessage) {
+    opciones = opcionesMessage
+}
+
+function togglePlay(playingMessage) {
+    if(playingMessage) {
+        playing = true;
         requestAnimationFrame(renderCanvasFondo);
         requestAnimationFrame(renderCanvas);
+    } else {
+        playing = false;
     }
-    holdearNotas = opciones.holdearNotas
-    console.log(holdearNotas)
 }
 
 function handleNota(presionado, nota) {
-    console.log(holdearNotas)
-    if(presionado == 0 ) {
-        if(holdearNotas == false) {
-
+    if(presionado == 0) {
+        if(opciones.holdearNotas == false) {
             const index = notasPresionadas.indexOf(nota);
             if (index > -1) {
                 notasPresionadas.splice(index, 1);
@@ -72,14 +76,15 @@ function inicializarCanvas(canvas) {
 }
 
 function renderCanvas() {
-    notasPresionadas.forEach(nota => {        
-        ctx.fillStyle = color;
-        if(orientacion == 'vertical') {
-            ctx.fillRect(nota * 5, posicion, grosorLinea, 5);
+    ctx.fillStyle = color;
+    var longitud = notasPresionadas.length
+    for (var i=0; i < longitud; ++i){
+        if(opciones.orientacion == 'Vertical') {
+            ctx.fillRect(notasPresionadas[i] * 5, posicion, opciones.grosorLinea, 5);
         } else {
-            ctx.fillRect(posicion, nota * 5, 5, grosorLinea);
+            ctx.fillRect(posicion, notasPresionadas[i] * 5, 5, opciones.grosorLinea);
         }
-    });
+    }
 
     requestAnimationFrame(renderCanvas);
 }
@@ -94,7 +99,6 @@ function inicializarCanvasFondo(fondo) {
 }
 
 function renderCanvasFondo() {
-
     const tiempo = new Date() - tiempoInicial;
     posicion = (tiempo/10000) * canvasFondo.height;
     borrar(ctxFondo);
@@ -113,7 +117,7 @@ function renderCanvasFondo() {
 // FUNCIONES DE PINTADO Y DESPINTADO DEL CANVAS
 
 function pintarLinea() {
-    if(orientacion == 'vertical') {
+    if(opciones.orientacion == 'Vertical') {
         ctxFondo.fillRect(0, posicion, canvasFondo.width, 1);
     } else {
         ctxFondo.fillRect(posicion, 0, 1, canvasFondo.width);

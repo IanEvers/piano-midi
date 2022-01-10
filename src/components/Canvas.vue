@@ -3,7 +3,7 @@
       <canvas width="500" height="500"  class="canvas" id="canvas"></canvas>
       <canvas width="500" height="500"  class="canvas canvasFondo" id="canvasFondo"></canvas>
       <button v-if="!playing" @click="play()"> <i class="fas fa-play fa-4x"></i> </button> 
-      <button v-else @click="pause()"> <i class="fas fa-pause fa-4x"></i> </button> 
+      <button v-else @click="pause()" class="botonPausa"> <i class="fas fa-pause fa-4x "></i> </button> 
   </div>
 </template>
 
@@ -17,9 +17,14 @@ export default {
   data() {
     return {
       midiDevice: null,
-      regularWorker: new Worker("/workers/canvasWorker.js"),
+      
       started: false,
       playing: false,
+    }
+  },
+   computed: {
+    regularWorker () {
+      return this.$store.state.regularWorker
     }
   },
   mounted() {
@@ -63,9 +68,8 @@ export default {
       }
 
       this.regularWorker.postMessage({
-        "opciones": 
-        {
-          playing: true
+        "playingStatus": {
+          "playing": true
         }
       });
 
@@ -73,7 +77,9 @@ export default {
     },
     pause() {
       this.regularWorker.postMessage({
-        "opciones": { playing: false }
+        "playingStatus": {
+          "playing": false
+        }
       });
 
       this.playing = false;
@@ -95,6 +101,7 @@ export default {
         "presionado": 1,
         "nota": note.number
       });
+
     },
 
     noteOff(note) {
@@ -108,7 +115,7 @@ export default {
 
     redimensionar() {
       var canvases = document.getElementsByClassName('canvas')
-      console.log('dinesion!')
+
       Array.from(canvases).forEach(function(canvas) {
         canvas.width  = window.innerWidth / 2.5
         canvas.height =  canvas.width 
@@ -124,6 +131,15 @@ export default {
 .canvasContenedor {
   position: relative;
   display: flex;
+}
+
+.botonPausa {
+  color:transparent;
+}
+
+
+.canvasContenedor:hover > .botonPausa {
+  color: #00a6d870; 
 }
 
 canvas {
@@ -155,5 +171,6 @@ button {
   color: #00a6d870;
   padding: 0;
 }
+
 
 </style>
