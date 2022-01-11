@@ -22,7 +22,7 @@ export default {
       playing: false,
     }
   },
-   computed: {
+  computed: {
     regularWorker () {
       return this.$store.state.regularWorker
     }
@@ -35,7 +35,7 @@ export default {
       this.midiDevice = WebMidi.getInputByName(this.availableInputs[0]); //eslint-disable-line
     });
 
-    this.redimensionar();
+    this.tamañoCanvas();
   },
   methods: {
     start() {
@@ -113,7 +113,7 @@ export default {
       });
     },
 
-    redimensionar() {
+    tamañoCanvas() {
       var canvases = document.getElementsByClassName('canvas')
 
       Array.from(canvases).forEach(function(canvas) {

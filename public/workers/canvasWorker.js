@@ -1,13 +1,17 @@
-let canvas;
 let ctx;
-
  
 let canvasFondo;
 let ctxFondo;
 
+let canvasLado;
+
 let posicion;
 
-let notasPresionadas = [ ]
+let notasPresionadas = []
+
+let notasTotales;
+
+let proporcionNotasCanvas;
 
 let playing = false;
 let color = 'red';
@@ -36,11 +40,21 @@ onmessage = function(evt) {
         inicializarCanvas(evt.data.canvas)
     }  else if (evt.data.canvasFondo) {
         inicializarCanvasFondo(evt.data.canvasFondo)
+    }  else if (evt.data.borrarCanvas) {
+        tiempoInicial = new Date()
+        borrar(ctx)
     }
 };
 
 function setearConfiguracion(opcionesMessage) {
+
+    if(opciones.holdearNotas == true && opcionesMessage.holdearNotas == false) {
+        notasPresionadas.splice(0, notasPresionadas.length)
+    }
+
     opciones = opcionesMessage
+    notasTotales = opciones.notaMasAlta - opciones.notaMasBaja
+    proporcionNotasCanvas = canvasLado / notasTotales
 }
 
 function togglePlay(playingMessage) {
@@ -68,9 +82,9 @@ function handleNota(presionado, nota) {
     }
 }
 
-function inicializarCanvas(canvas) {
-    ctx = canvas.getContext("2d");
-    time = new Date()
+function inicializarCanvas(canvasMessage) {
+    ctx = canvasMessage.getContext("2d");
+    canvasLado = canvasMessage.width;
 
     requestAnimationFrame(renderCanvas);
 }
@@ -78,11 +92,13 @@ function inicializarCanvas(canvas) {
 function renderCanvas() {
     ctx.fillStyle = color;
     var longitud = notasPresionadas.length
-    for (var i=0; i < longitud; ++i){
+    var notaMasBaja = opciones.notaMasBaja
+    var grosorLinea = opciones.grosorLinea
+    for (var i=0; i < longitud; ++i) {
         if(opciones.orientacion == 'Vertical') {
-            ctx.fillRect(notasPresionadas[i] * 5, posicion, opciones.grosorLinea, 5);
+            ctx.fillRect( ( ( notasPresionadas[i] - notaMasBaja) * (canvasLado / notasTotales) ), posicion -5, grosorLinea, 5);
         } else {
-            ctx.fillRect(posicion, notasPresionadas[i] * 5, 5, opciones.grosorLinea);
+            ctx.fillRect(posicion -5, ( ( notasPresionadas[i] - notaMasBaja) * (canvasLado / notasTotales) ), 5, grosorLinea);
         }
     }
 
@@ -100,12 +116,12 @@ function inicializarCanvasFondo(fondo) {
 
 function renderCanvasFondo() {
     const tiempo = new Date() - tiempoInicial;
-    posicion = (tiempo/10000) * canvasFondo.height;
+    posicion = ((tiempo * opciones.velocidad) / 1000000) * canvasLado;
     borrar(ctxFondo);
     ctxFondo.fillStyle = color;
     pintarLinea();
-    /* chequea la altura del canvas sea orientación vertical u horizontal, porque el canvas es cuadrado. */
-    if(posicion > canvasFondo.height) { 
+
+    if(posicion > canvasLado) { 
         tiempoInicial = new Date();
     }
 
@@ -118,12 +134,12 @@ function renderCanvasFondo() {
 
 function pintarLinea() {
     if(opciones.orientacion == 'Vertical') {
-        ctxFondo.fillRect(0, posicion, canvasFondo.width, 1);
+        ctxFondo.fillRect(0, posicion, canvasLado, 1);
     } else {
-        ctxFondo.fillRect(posicion, 0, 1, canvasFondo.width);
+        ctxFondo.fillRect(posicion, 0, 1, canvasLado);
     }
 }
 
-function borrar(canvas) {
-    canvas.clearRect(0, 0, canvasFondo.width, canvasFondo.height);
+function borrar(ctx) {
+    ctx.clearRect(0, 0, canvasLado, canvasLado);
 }

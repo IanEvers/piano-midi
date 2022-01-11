@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     colorRandom() {
-      return '#' + Math.floor(Math.random()*16777215).toString(16)
+      return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
     }
   }
 }
@@ -85,6 +85,10 @@ h1 {
 .fullScreen:hover, 
 .icono:hover {
   transform: translateY(-0.25em);
+}
+
+.el-popper {
+  font-size: 1rem !important;
 }
 
 </style>

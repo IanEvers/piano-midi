@@ -3,6 +3,7 @@
     <el-tooltip class="item" content="No disponible" placement="right" effect="dark" >
       <button id="fullScreen" class="fullScreen shadow" @click="fullScreen"> <i class="fas fa-expand fa-3x"></i> </button>
     </el-tooltip>
+    <button class="fullScreen shadow" @click="borrarCanvas"> <i class="fas fa-redo fa-3x"></i> </button>
 
     <div class="orientacion">
       <el-form
@@ -57,8 +58,8 @@ export default {
       opciones: {
         orientacion: 'Vertical',
         velocidad: 60,
-        notaMasBaja: 33,
-        notaMasAlta: 86,
+        notaMasBaja: 36,
+        notaMasAlta: 84,
         grosorLinea: 10,
         holdearNotas: false,
         color: 'red'
@@ -82,6 +83,9 @@ export default {
     regularWorker () {
       return this.$store.state.regularWorker
     }
+  },
+  mounted() {
+    this.OnCambioParametros()
   },
   methods: {
     fullScreen() {
@@ -107,6 +111,11 @@ export default {
         }
       });
     },
+    borrarCanvas() {
+      this.regularWorker.postMessage({
+        "borrarCanvas" : true
+      }) 
+    }
   }
 }
 </script>

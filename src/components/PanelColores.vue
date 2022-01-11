@@ -14,20 +14,32 @@
     </div>
   </div>
   <div class="colores">
-    <div class="estilo shadow">
-      <i class="fas fa-palette fa-2x noColor color"></i>
-      <div class="columnaColores">
-        <div v-for="(paleta, index) in paletas" :key="index">
-          <div v-if="(paleta.activo)">
-            <div v-for="(color, index) in paleta.paleta.colores" :key="index">
-              <Color
-                v-model="color.color" :colorEliminable="eliminarColores" @borrar="borrarColor(index)"
-              />
+    <el-tooltip
+      effect="dark"
+      content="Click derecho para elegir color"
+      placement="right"
+      transition="none"
+      :hide-after="0"
+    >
+      <div class="estilo shadow">
+        <i class="fas fa-palette fa-2x noColor color"></i>
+        <div class="columnaColores">
+          <div v-for="(paleta, index) in paletas" :key="index">
+            <div v-if="(paleta.activo)">
+              <div v-for="(color, index) in paleta.paleta.colores" :key="index">
+                <Color
+                  v-model="color.color"
+                  :seleccionado="index == paleta.paleta.seleccionado"
+                  :colorEliminable="eliminarColores"
+                  @borrar="borrarColor(index)"
+                  @seleccion="seleccionarColor(index)"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </el-tooltip>
   </div>
 </template>
 
@@ -53,6 +65,11 @@ export default {
       eliminarColores: false
     }
   },
+  computed: {
+    regularWorker () {
+      return this.$store.state.regularWorker
+    }
+  },
   mounted() {
     if (localStorage.getItem('paletas')) {
       try {
@@ -61,6 +78,7 @@ export default {
         localStorage.removeItem('paletas');
       }
     }
+    this.seleccionarColor(0)
   },
   methods: {
     agregarColor: function () {
@@ -85,16 +103,24 @@ export default {
     },
     paletaActiva() {
       return this.paletas.find(paleta => paleta.activo == true).paleta;
+    },
+    seleccionarColor(index) {
+      this.paletaActiva().seleccionado = index
+
+      this.regularWorker.postMessage({
+        "color" : this.paletaActiva().colores[index].color
+      });
     }
   },
 }
 
 function colorRandom() {
-  return '#' + Math.floor(Math.random()*16777215).toString(16)
+  return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')
 }
 
 const paletaInicial = {
   nombre: 'paletaInicial',
+  seleccionado: 0,
   colores: [
     {
       id: 1,
