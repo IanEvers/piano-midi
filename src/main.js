@@ -7,9 +7,17 @@ import { createStore } from 'vuex'
 const store = createStore({
   state () {
     return {
-        regularWorker: new Worker("./workers/canvasWorker.js")
+      regularWorker: new Worker("./workers/canvasWorker.js"),
+      pianoControllersDisplay: true,
+      notaMasBaja: 36,
     }
   },
+  mutations: {
+    togglePianoControllersDisplay (state) {
+      // mutate state
+      state.pianoControllersDisplay = !state.pianoControllersDisplay
+    }
+  }
 })
 
 const app = createApp(App)

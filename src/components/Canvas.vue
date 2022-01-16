@@ -25,6 +25,9 @@ export default {
   computed: {
     regularWorker () {
       return this.$store.state.regularWorker
+    },
+    pianoControllersDisplay() {
+      return this.$store.state.pianoControllersDisplay
     }
   },
   mounted() {
@@ -51,6 +54,12 @@ export default {
       if(this.midiDevice) {
         this.midiDevice.addListener('noteon', 'all', (e) => {
           const { note } = e;
+          
+          if(note.number == this.$store.state.notaMasBaja) {
+            this.$store.commit('togglePianoControllersDisplay')
+            return
+          }
+
           this.noteOn(note);
         });
 
@@ -136,7 +145,6 @@ export default {
 .botonPausa {
   color:transparent;
 }
-
 
 .canvasContenedor:hover > .botonPausa {
   color: #00a6d870; 

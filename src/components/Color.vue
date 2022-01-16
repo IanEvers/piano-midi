@@ -51,6 +51,8 @@ input[type="color"]::-webkit-color-swatch {
 .colorEliminable {
   position: absolute;
   color: red;
+  background-color: white;
+  border-radius: 50px;
 }
 
 button {
