@@ -96,9 +96,9 @@ function renderCanvas() {
     var grosorLinea = opciones.grosorLinea
     for (var i=0; i < longitud; ++i) {
         if(opciones.orientacion == 'Vertical') {
-            ctx.fillRect( ( ( notasPresionadas[i] - notaMasBaja) * (canvasLado / notasTotales) ), posicion -5, grosorLinea, 5);
+            ctx.fillRect( ( ( notasPresionadas[i] - notaMasBaja -1) * (canvasLado / notasTotales) ), posicion -5, grosorLinea, 5);
         } else {
-            ctx.fillRect(posicion -5, ( ( notasPresionadas[i] - notaMasBaja) * (canvasLado / notasTotales) ), 5, grosorLinea);
+            ctx.fillRect(posicion -5, ( ( notasPresionadas[i] - notaMasBaja -1) * (canvasLado / notasTotales) ), 5, grosorLinea);
         }
     }
 

@@ -65,10 +65,12 @@ h1 {
   background-color: #00a6d870;
   text-align: center;
 }
+
 .contenedor {
   display: flex;
   justify-content: center;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

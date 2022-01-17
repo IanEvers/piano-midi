@@ -14,7 +14,6 @@ const store = createStore({
   },
   mutations: {
     togglePianoControllersDisplay (state) {
-      // mutate state
       state.pianoControllersDisplay = !state.pianoControllersDisplay
     }
   }
@@ -24,4 +23,3 @@ const app = createApp(App)
 app.use(ElementPlus)
 app.use(store)
 app.mount('#app')
-
