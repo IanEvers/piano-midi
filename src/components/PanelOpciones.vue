@@ -9,7 +9,7 @@
         :label-position="form.labelPosition"
         :model="form.formLabelAlign"
       >
-        <span class="label">Nota más grave</span>
+        <span class="label">Nota más grave: {{nota(opciones.notaMasBaja)}}</span>
         <div class="input flex">
           <el-input-number 
             v-model="opciones.notaMasBaja"
@@ -18,7 +18,7 @@
             @change="OnCambioParametros()" 
           />
         </div>
-        <span class="label">Nota más aguda</span>
+        <span class="label">Nota más aguda: {{nota(opciones.notaMasAlta)}}</span>
         <div class="input flex">
           <el-input-number 
             v-model="opciones.notaMasAlta" 
@@ -31,7 +31,7 @@
         <span class="label">Orientación</span>
         <div class="input">
           <el-radio-group 
-            v-model="opciones.orientacion" 
+            v-model="opciones.orientacion"
             @change="OnCambioParametros()"
           >
             <el-radio-button label="Vertical"  ></el-radio-button>
