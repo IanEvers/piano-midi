@@ -17,7 +17,6 @@ export default {
   data() {
     return {
       midiDevice: null,
-      
       started: false,
       playing: false,
     }
@@ -28,7 +27,10 @@ export default {
     },
     pianoControllersDisplay() {
       return this.$store.state.pianoControllersDisplay
-    }
+    },
+    notaMasBaja() {
+      return this.$store.state.notaMasBaja
+    },
   },
   mounted() {
     this.initializePianoSamples();
@@ -40,6 +42,15 @@ export default {
 
     this.tamañoCanvas();
   },
+
+  created() {
+    window.addEventListener("resize", this.tamañoCanvas);
+  },
+
+  unmounted() {
+    window.removeEventListener("resize", this.tamañoCanvas);
+  },
+
   methods: {
     start() {
       // envío la lógica de los canvas al worker
@@ -55,8 +66,14 @@ export default {
         this.midiDevice.addListener('noteon', 'all', (e) => {
           const { note } = e;
           
-          if(note.number == this.$store.state.notaMasBaja) {
+          if(note.number == this.notaMasBaja) {
             this.$store.commit('togglePianoControllersDisplay')
+            return
+          }
+
+          //si la nota es menor a la más baja + 10 y , lo mandamos al handler de opciones
+          if(note.number < this.notaMasBaja + 10 && this.pianoControllersDisplay == true) {
+            this.opcionesHandler(note.number)
             return
           }
 
@@ -84,6 +101,7 @@ export default {
 
       this.playing = true;
     },
+
     pause() {
       this.regularWorker.postMessage({
         "playingStatus": {
@@ -129,8 +147,40 @@ export default {
         canvas.width  = window.innerWidth / 2.5
         canvas.height =  canvas.width 
       });
-    }
-  },
+    },
+
+    opcionesHandler(nota) {
+      switch (nota) {
+        case this.notaMasBaja + 2:
+          this.$store.commit('colorAnterior')
+          break;
+        case this.notaMasBaja + 3:
+          this.$store.commit('colorSiguiente')
+          break;
+        case this.notaMasBaja + 4:
+          console.log('orien')
+          this.$store.commit('toggleOrientacion')
+          break;
+        case this.notaMasBaja + 5:
+          this.$store.commit('menosVelocidad')
+          break;
+        case this.notaMasBaja + 6:
+          this.$store.commit('masVelocidad')
+          break;
+        case this.notaMasBaja + 7:
+          this.$store.commit('menosGrosorDeLinea')
+          break;
+        case this.notaMasBaja + 8:
+          this.$store.commit('masGrosorDeLinea')
+          break;
+        case this.notaMasBaja + 9:
+          this.$store.commit('toggleHoldearNotas')
+          break;
+        default:
+          console.log('Ninguna instrucción encontrada.');
+      }
+    },
+  }
 }
 
 </script>
@@ -139,6 +189,7 @@ export default {
 
 .canvasContenedor {
   position: relative;
+  align-self: flex-start;
   display: flex;
 }
 
@@ -158,15 +209,6 @@ canvas {
   position: absolute;
 }
 
-canvas:fullscreen {
-  background-color: #f3ffff;
-}
-canvas:-webkit-full-screen {
-  background-color: #f3ffff ;
-}
-canvas:-moz-full-screen {
-  background-color: #f3ffff;
-}
 
 button {
   position: absolute;

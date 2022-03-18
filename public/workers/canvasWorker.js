@@ -117,7 +117,9 @@ function inicializarCanvasFondo(fondo) {
 function renderCanvasFondo() {
     const tiempo = new Date() - tiempoInicial;
     posicion = ((tiempo * opciones.velocidad) / 1000000) * canvasLado;
+
     borrar(ctxFondo);
+    
     ctxFondo.fillStyle = color;
     pintarLinea();
 

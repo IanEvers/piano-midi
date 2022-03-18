@@ -10,13 +10,50 @@ const store = createStore({
       regularWorker: new Worker("./workers/canvasWorker.js"),
       pianoControllersDisplay: true,
       notaMasBaja: 36,
+      opciones: {
+        orientacion: 'Vertical',
+        velocidad: 60,
+        notaMasBaja: 36,
+        notaMasAlta: 84,
+        grosorLinea: 10,
+        holdearNotas: false,
+        color: 'red'
+      },
     }
   },
   mutations: {
     togglePianoControllersDisplay (state) {
       state.pianoControllersDisplay = !state.pianoControllersDisplay
+    },
+    toggleOrientacion () {
+      console.log('orieenenen')
+   
+    },
+    toggleHoldearNotas(state) {
+      console.log('a')
+
+      state.opciones.holdearNotas = !state.opciones.holdearNotas
+    },
+    colorAnterior() {
+
+    },
+    colorSiguiente() {
+
+    },
+    menosVelocidad() {
+
+    },
+    masVelocidad() {
+
+    },
+    menosGrosorDeLinea() {
+
+    },
+    masGrosorDeLinea() {
+
     }
-  }
+  },
+
 })
 
 const app = createApp(App)

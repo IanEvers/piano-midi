@@ -1,9 +1,7 @@
 <template>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <div class="titulo">
-    <h1 class="titulo">BROKER</h1>
-  </div>
+  <Header> </Header>
 
   <div class="contenedor">
     <PanelColores/>
@@ -18,13 +16,15 @@
 import PanelColores from './components/PanelColores.vue'
 import Canvas from './components/Canvas.vue'
 import PanelOpciones from './components/PanelOpciones.vue'
+import Header from './components/Header.vue'
 
 export default {
   name: 'App',
   components: {
     PanelColores,
     Canvas,
-    PanelOpciones
+    PanelOpciones,
+    Header
   },
   data() {
     return {}
@@ -43,32 +43,63 @@ export default {
 </script>
 
 <style>
-h1, body {
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body {
   margin: 0px;
   background-color: #dfebeb;
 }
 
-.titulo {
-  padding: 1rem;
+nav {
+  margin-bottom: 2rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  background: rgb(255, 255, 255);
 }
 
-h1 {
-  text-align: center;
-  padding: 2rem;
-  padding-left: 1.6rem;
-  padding-right: 1.6rem;
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
-  border-radius: 50px;
-  background-color: #00a6d870;
-  text-align: center;
+.hr {
+  border: #242121a2 1px solid;
+  height: 1.5rem;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+
+.linkBtn {
+  cursor: pointer;
+  margin: 1rem;
+  border: none;
+  font-size: 1.1rem;
+  background-color: white;
+}
+
+.linksDerecha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guardarIcono {
+  margin-right: 0.5rem;
+}
+
+.usuario {
+  margin-left: 1rem;
+  margin-right: 2rem;
 }
 
 .contenedor {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 #app {
@@ -87,10 +118,7 @@ h1 {
 .fullScreen:hover, 
 .icono:hover {
   transform: translateY(-0.25em);
-}
 
-.el-popper {
-  font-size: 1rem !important;
 }
 
 </style>

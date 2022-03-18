@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex icono" id="guardarColor" @click="guardarColores">
+    <div class="flex icono primerIcono" id="guardarColor" @click="guardarColores">
       <i class="fas fa-save fa-2x noColor"></i>
     </div>
     <div class="flex icono" id="abrirColor">
@@ -10,8 +10,8 @@
       <i class="fas fa-plus fa-2x noColor" id="agregarColor"  @click="agregarColor"></i>
     </div>
     <div class="flex icono eliminarcolor" id="" >
-      <i class="fas fa-trash fa-2x noColor" 
-        :class="{ borde: eliminarColores }" 
+      <i class="fas fa-trash fa-2x noColor"
+        :class="{ borde: eliminarColores }"
         id="borrarColor" 
         @click="coloresEliminables"
       ></i>
@@ -44,12 +44,33 @@
         </div>
       </div>
     </el-tooltip>
+  
+    <div class="controlesColores colores">
+    <button 
+      :class="{transparent: !pianoControllersDisplay}" 
+      class="botonDisplayPiano botonGrosor"
+      type="button"
+    >
+      {{nota(this.notaMasBajaStore + 2)}}
+    </button>
+    <button class="flechaControles"> <i class="fas fa-arrow-up fa-2x"></i> </button> 
+    <button class="flechaControles"> <i class="fas fa-arrow-down fa-2x"></i> </button> 
+  
+    <button 
+      :class="{transparent: !pianoControllersDisplay}" 
+      class="botonDisplayPiano botonGrosor"
+      type="button"
+    >
+      {{nota(this.notaMasBajaStore + 3)}} 
+    </button>
+    </div>
   </div>
 </template>
 
 
 <script>
 import Color from './Color.vue'
+import MidiNote from 'midi-note'
 
 export default {
   name: 'PanelColores',
@@ -72,7 +93,13 @@ export default {
   computed: {
     regularWorker () {
       return this.$store.state.regularWorker
-    }
+    },
+    pianoControllersDisplay() {
+      return this.$store.state.pianoControllersDisplay
+    },
+    notaMasBajaStore() {
+      return this.$store.state.notaMasBaja
+    },
   },
   mounted() {
     if (localStorage.getItem('paletas')) {
@@ -114,6 +141,9 @@ export default {
       this.regularWorker.postMessage({
         "color" : this.paletaActiva().colores[index].color
       });
+    },
+    nota(nota) {
+      return MidiNote(nota)
     }
   },
 }
@@ -146,8 +176,14 @@ const paletaInicial = {
 
 <style scoped>
 
+.primerIcono {
+  margin-top: 0 !important;
+}
+
 .colores {
-  padding-right: 1rem;
+  padding-right: 0.8rem;
+  display: flex;
+  align-items: flex-start;
 }
 
 .flex {
@@ -162,7 +198,6 @@ const paletaInicial = {
 .estilo {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   border-radius: 50px;
   border: 1px solid #ccc;
   padding : 0.2rem;
@@ -170,6 +205,7 @@ const paletaInicial = {
   margin-bottom: 1rem;
   max-height: 80vh;
   text-align: center;
+  margin-right: 1rem;
 }
 
 .columnaColores {
@@ -178,7 +214,7 @@ const paletaInicial = {
 }
 
 .color {
-  background-color: #e9e5e6;
+  background-color: transparent;
   margin-bottom: 0.5rem;
   align-self: center;
 }
@@ -205,6 +241,21 @@ const paletaInicial = {
 
 .eliminarcolor {
   color: red;
+}
+
+.controlesColores {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5rem;
+}
+
+.flechaControles {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 25px;
+  background: none;
 }
 
 </style>

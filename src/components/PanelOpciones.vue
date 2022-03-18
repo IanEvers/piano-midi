@@ -1,9 +1,11 @@
 <template>
-  <div>
+  <div class="panelOpciones">
+
     <el-tooltip class="item" content="No disponible" placement="right" effect="dark">
       <button id="fullScreen" class="fullScreen shadow" @click="fullScreen"> <i class="fas fa-expand fa-3x"></i> </button>
     </el-tooltip>
     <button class="fullScreen shadow" @click="borrarCanvas"> <i class="fas fa-redo fa-3x"></i> </button>
+    
     <div class="orientacion">
       <el-form
         :label-position="form.labelPosition"
@@ -42,7 +44,7 @@
             class="botonDisplayPiano"
             type="button" 
           > 
-            {{nota(this.opciones.notaMasBaja + 2)}} 
+            {{nota(this.opciones.notaMasBaja + 4)}} 
           </button>
         </div>
 
@@ -52,7 +54,7 @@
             :class="{transparent: !pianoControllersDisplay}" 
             type='button' class="botonDisplayPiano botonGrosor"
           >  
-            {{nota(this.opciones.notaMasBaja + 3)}} 
+            {{nota(this.opciones.notaMasBaja + 5)}} 
           </button>
           <el-input-number 
             v-model="opciones.velocidad" 
@@ -65,7 +67,7 @@
             type='button'
             class="botonDisplayPiano botonGrosor"
           >
-            {{nota(this.opciones.notaMasBaja + 4)}} 
+            {{nota(this.opciones.notaMasBaja + 6)}} 
           </button>
         </div>
         <span class="label">Grosor de línea</span>
@@ -121,16 +123,6 @@ export default {
   },
   data() {
     return {
-      opciones: {
-        orientacion: 'Vertical',
-        velocidad: 60,
-        notaMasBaja: 36,
-        notaMasAlta: 84,
-        grosorLinea: 10,
-        holdearNotas: false,
-        color: 'red'
-      },
-
       form: {
         holdearNotas:  {
           label:'No',
@@ -155,6 +147,14 @@ export default {
     notaMasBajaStore() {
       return this.$store.state.notaMasBaja
     },
+    opciones() {
+      return this.$store.state.opciones
+    }
+  },
+  watch: {
+    opciones: function() {
+      this.OnCambioParametros()
+    }
   },
   mounted() {
     this.OnCambioParametros()
@@ -165,7 +165,7 @@ export default {
       this.OnCambioParametros()
     },
     OnCambioParametros() {
-      this.$store.notaMasBaja = this.opciones.notaMasBaja
+      this.$store.state.notaMasBaja = this.opciones.notaMasBaja
       this.regularWorker.postMessage({
         "opciones": 
         {
@@ -186,6 +186,10 @@ export default {
 </script>
 
 <style>
+
+.panelOpciones {
+  margin-left: 1rem;
+}
 
 .fullScreen {
   margin-left: 1rem;
@@ -223,6 +227,7 @@ export default {
 
 .input {
   padding: 0.7rem;
+  padding-left: 0;
   display: flex;
   align-items: center;
 }
@@ -240,12 +245,12 @@ export default {
   background-color: white;
   padding: 0.7rem;
   border: none;
+  min-width: 2.6rem;
+  text-align: center;
 }
 
 .botonGrosor {
   margin: 0;
-  display: flex;
-  align-items: center;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
