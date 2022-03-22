@@ -18,51 +18,52 @@
     </div>
   </div>
   <div class="colores">
-    <el-tooltip
-      effect="dark"
-      content="Click derecho para elegir color"
-      placement="right"
-      transition="none"
-      :hide-after="0"
-    >
-      <div class="estilo shadow">
-        <i class="fas fa-palette fa-2x noColor color"></i>
-        <div class="columnaColores">
-          <div v-for="(paleta, index) in paletas" :key="index">
-            <div v-if="(paleta.activo)">
-              <div v-for="(color, index) in paleta.paleta.colores" :key="index">
-                <Color
-                  v-model="color.color"
-                  :seleccionado="index == paleta.paleta.seleccionado"
-                  :colorEliminable="eliminarColores"
-                  @borrar="borrarColor(index)"
-                  @seleccion="seleccionarColor(index)"
-                />
+    <div class="colorLayout">
+      <el-tooltip
+        effect="dark"
+        content="Click derecho para elegir color"
+        placement="right"
+        transition="none"
+        :hide-after="0"
+      >
+        <div class="estilo shadow">
+          <i class="fas fa-palette fa-2x noColor color"></i>
+          <div class="columnaColores">
+            <div v-for="(paleta, index) in paletas" :key="index">
+              <div v-if="(paleta.activo)">
+                <div v-for="(color, index) in paleta.paleta.colores" :key="index">
+                  <Color
+                    v-model="color.color"
+                    :seleccionado="index == paleta.paleta.seleccionado"
+                    :colorEliminable="eliminarColores"
+                    @borrar="borrarColor(index)"
+                    @seleccion="seleccionarColor(index)"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </el-tooltip>
+      <div class="controlesColores colores">
+        <button
+          :class="{transparent: !pianoControllersDisplay}"
+          class="botonDisplayPiano botonGrosor"
+          type="button"
+        >
+          {{nota(this.notaMasBajaStore + 2)}}
+        </button>
+        <button class="flechaControles"> <i class="fas fa-arrow-up fa-2x"></i> </button>
+        <button class="flechaControles"> <i class="fas fa-arrow-down fa-2x"></i> </button>
+      
+        <button
+          :class="{transparent: !pianoControllersDisplay}"
+          class="botonDisplayPiano botonGrosor"
+          type="button"
+        >
+          {{nota(this.notaMasBajaStore + 3)}}
+        </button>
       </div>
-    </el-tooltip>
-  
-    <div class="controlesColores colores">
-    <button 
-      :class="{transparent: !pianoControllersDisplay}" 
-      class="botonDisplayPiano botonGrosor"
-      type="button"
-    >
-      {{nota(this.notaMasBajaStore + 2)}}
-    </button>
-    <button class="flechaControles"> <i class="fas fa-arrow-up fa-2x"></i> </button> 
-    <button class="flechaControles"> <i class="fas fa-arrow-down fa-2x"></i> </button> 
-  
-    <button 
-      :class="{transparent: !pianoControllersDisplay}" 
-      class="botonDisplayPiano botonGrosor"
-      type="button"
-    >
-      {{nota(this.notaMasBajaStore + 3)}} 
-    </button>
     </div>
   </div>
 </template>
@@ -191,6 +192,12 @@ const paletaInicial = {
   justify-content: center;
 }
 
+.colorLayout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .shadow {
   box-shadow: rgba(149, 157, 165, 0.4) 0px 8px 24px;
 }
@@ -224,7 +231,7 @@ const paletaInicial = {
 }
 
 .borde {
-  border: 2px solid grey;
+  border: 2px solid black;
 }
 
 .noColor {
@@ -247,7 +254,6 @@ const paletaInicial = {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 5rem;
 }
 
 .flechaControles {

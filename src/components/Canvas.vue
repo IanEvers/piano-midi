@@ -144,8 +144,8 @@ export default {
       var canvases = document.getElementsByClassName('canvas')
 
       Array.from(canvases).forEach(function(canvas) {
-        canvas.width  = window.innerWidth / 2.5
-        canvas.height =  canvas.width 
+        canvas.height = window.innerHeight * 0.85
+        canvas.width  = canvas.height
       });
     },
 
