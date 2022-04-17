@@ -62,9 +62,10 @@ button {
 }
 
 .seleccionado {
-  border: #e9e5e6 4px solid !important;
+  /* border: #e9e5e6 4px solid !important; */
   outline: 3px solid black ;
   border-radius: 50px;
+  box-shadow: none;
 }
 
 </style>

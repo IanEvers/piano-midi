@@ -1,6 +1,6 @@
 <template>
   <div class="canvasContenedor">
-      <canvas width="500" height="500"  class="canvas" id="canvas"></canvas>
+    <canvas width="500" height="500"  class="canvas" id="canvas"></canvas>
       <canvas width="500" height="500"  class="canvas canvasFondo" id="canvasFondo"></canvas>
       <button v-if="!playing" @click="play()"> <i class="fas fa-play fa-4x"></i> </button> 
       <button v-else @click="pause()" class="botonPausa"> <i class="fas fa-pause fa-4x "></i> </button> 
@@ -19,6 +19,7 @@ export default {
       midiDevice: null,
       started: false,
       playing: false,
+      notasPresionadas: []
     }
   },
   computed: {
@@ -61,23 +62,11 @@ export default {
       var canvasFondo = document.getElementById('canvasFondo')
       var offscreenFondo = canvasFondo.transferControlToOffscreen();
       this.regularWorker.postMessage({canvasFondo: offscreenFondo}, [offscreenFondo]);
-      
+
       if(this.midiDevice) {
         this.midiDevice.addListener('noteon', 'all', (e) => {
           const { note } = e;
-          
-          if(note.number == this.notaMasBaja) {
-            this.$store.commit('togglePianoControllersDisplay')
-            return
-          }
-
-          //si la nota es menor a la más baja + 10 y , lo mandamos al handler de opciones
-          if(note.number < this.notaMasBaja + 10 && this.pianoControllersDisplay == true) {
-            this.opcionesHandler(note.number)
-            return
-          }
-
-          this.noteOn(note);
+          this.tocarNota(note)
         });
 
         this.midiDevice.addListener('noteoff', 'all', (e) => {
@@ -85,6 +74,31 @@ export default {
           this.noteOff(note);
         });
       }
+
+      const self = this;
+
+      window.addEventListener("keydown",  function(e) {
+        const note = {
+          number: self.tecladoAPiano(e.key)
+        }
+        
+        const index = self.notasPresionadas.indexOf(note.number);
+        
+        if (index > -1) {
+          return
+        }
+
+        self.tocarNota(note);
+      });
+
+      window.addEventListener("keyup",  function(e) {
+        const note = {
+          number: self.tecladoAPiano(e.key)
+        }
+
+        self.soltarNota(note);
+      });
+
       this.started = true
     },
 
@@ -121,6 +135,36 @@ export default {
       });
     },
 
+    tocarNota(note) {
+      if(this.playing) {
+
+        this.notasPresionadas.push(note.number); 
+
+        if(note.number == this.notaMasBaja) {
+          this.$store.commit('togglePianoControllersDisplay')
+          return
+        }
+
+        // si la nota es menor a la más baja + 10 y está activado el display de opciones, lo mandamos al handler de opciones
+        if(note.number < this.notaMasBaja + 10 && this.pianoControllersDisplay == true) {
+          this.opcionesHandler(note.number)
+          return
+        }
+
+        this.noteOn(note);
+      }
+    },
+
+    soltarNota(note) {
+      const index = this.notasPresionadas.indexOf(note.number);
+      
+      if (index > -1) {
+        this.notasPresionadas.splice(index, 1);
+      }
+
+      this.noteOff(note);
+    },
+
     noteOn(note) {
       this.piano.keyDown({ midi: note.number });
 
@@ -147,6 +191,13 @@ export default {
         canvas.height = window.innerHeight * 0.85
         canvas.width  = canvas.height
       });
+    },
+
+    tecladoAPiano(notaTeclado) {
+      let teclas = ['a','w','s','e','d','f','t','g','y','h','j','i','k']
+      let notas = [36,38,57,58,59,60,61,62,63,64,65,66,67]
+      let nota = notas[teclas.indexOf(notaTeclado)]
+      return nota
     },
 
     opcionesHandler(nota) {
@@ -194,7 +245,7 @@ export default {
 }
 
 .botonPausa {
-  color:transparent;
+  color: transparent;
 }
 
 .canvasContenedor:hover > .botonPausa {

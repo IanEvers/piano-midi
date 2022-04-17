@@ -9,7 +9,7 @@ const store = createStore({
     return {
       regularWorker: new Worker("./workers/canvasWorker.js"),
       pianoControllersDisplay: true,
-      notaMasBaja: 36,
+
       opciones: {
         orientacion: 'Vertical',
         velocidad: 60,
@@ -19,6 +19,10 @@ const store = createStore({
         holdearNotas: false,
         color: 'red'
       },
+
+      
+
+
     }
   },
   mutations: {
@@ -27,14 +31,12 @@ const store = createStore({
     },
     toggleOrientacion () {
       console.log('orieenenen')
-   
     },
     toggleHoldearNotas(state) {
-      console.log('a')
-
       state.opciones.holdearNotas = !state.opciones.holdearNotas
     },
     colorAnterior() {
+      console.log('colorAnterior')
 
     },
     colorSiguiente() {

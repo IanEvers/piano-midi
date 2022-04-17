@@ -78,6 +78,7 @@ export default {
   components: {
     Color
   },
+  
   data() {
     return {
       paletas: [
@@ -91,6 +92,7 @@ export default {
       eliminarColores: false
     }
   },
+
   computed: {
     regularWorker () {
       return this.$store.state.regularWorker
@@ -101,7 +103,9 @@ export default {
     notaMasBajaStore() {
       return this.$store.state.notaMasBaja
     },
+    
   },
+
   mounted() {
     if (localStorage.getItem('paletas')) {
       try {
@@ -112,6 +116,7 @@ export default {
     }
     this.seleccionarColor(0)
   },
+
   methods: {
     agregarColor: function () {
       var paletaActiva = this.paletaActiva();
@@ -122,20 +127,25 @@ export default {
         })
       }
     },
+
     guardarColores () {
       localStorage.paletas = JSON.stringify(this.paletas)
     },
+
     coloresEliminables() {
       this.eliminarColores = !this.eliminarColores
     },
+
     borrarColor(index) {
       var paletaActiva = this.paletaActiva();
       paletaActiva.colores.splice(index, 1)
       paletaActiva.siguienteId--
     },
+
     paletaActiva() {
       return this.paletas.find(paleta => paleta.activo == true).paleta;
     },
+
     seleccionarColor(index) {
       this.paletaActiva().seleccionado = index
 
@@ -143,6 +153,15 @@ export default {
         "color" : this.paletaActiva().colores[index].color
       });
     },
+
+    seleccionarColorArriba() {
+      console.log('seleccionarColorArriba')
+    },
+
+    seleccionarColorAbajo() {
+      console.log('seleccionarColorAbajo')
+    },
+
     nota(nota) {
       return MidiNote(nota)
     }
